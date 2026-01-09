@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Playback Controller</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 400px;
+            padding: 0;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #191414, #1db954);
+            color: white;
+            overflow: hidden;
+        }
+        
+        .container {
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #1db954, #1ed760);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .now-playing {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        
+        .track-info {
+            margin-bottom: 15px;
+        }
+        
+        .track-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .track-artist {
+            font-size: 14px;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .playback-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .control-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .control-btn:hover {
+            background: rgba(0, 0, 0, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .control-btn svg {
+            width: 32px;
+            height: 32px;
+            fill: #ffffff;
+        }
+                
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .control-btn:disabled:hover {
+            transform: none;
+            background: none;
+        }
+        
+        .control-btn:disabled svg {
+            fill: #fff;
+        }
+        
+        .prev-btn, .next-btn {
+            width: 45px;
+            height: 45px;
+        }
+        
+        .like-btn {
+            width: 45px;
+            height: 45px;
+        }
+        
+        .play-pause-btn {
+            width: 55px;
+            height: 55px;
+            font-size: 35px;
+            border-color: #1db954;
+        }
+        
+        .volume-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
+        }
+        
+        .volume-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .volume-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+        
+        .volume-slider {
+            width: 200px;
+            max-width: 250px;
+            min-width: 120px;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            margin: 0 8px;
+            transition: background 0.2s;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1db954, #1ed760);
+            cursor: pointer;
+            border: none;
+        }
+        
+        .volume-value {
+            font-weight: bold;
+            font-size: 14px;
+            min-width: 40px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 8px;
+            border-radius: 6px;
+        }
+        
+        .quick-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .status {
+            text-align: center;
+            font-size: 16px;
+            opacity: 1;
+            padding: 12px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .error {
+            color: white;
+            background: rgba(255, 107, 107, 0.3);
+            border-left: 3px solid #ff6b6b;
+        }
+        
+        .success {
+            color: white;
+            background: rgba(81, 207, 102, 0.3);
+            border-left: 3px solid #51cf66;
+        }
+        
+        .volume-icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+            opacity: 0.8;
+        }
+        
+        #muteIconSVG {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+        
+        #muteIconSVG svg {
+            display: block;
+            margin: auto;
+            fill: #fff !important;
+            stroke: #fff !important;
+            width: 32px;
+            height: 32px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(29, 185, 84, 1);
+            color: white;
+            padding: 10px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 400;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            min-width: 280px;
+            text-align: center;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+		
+		
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Spotify Controller</h1>
+        </div>
+        
+        <div class="now-playing">
+            <div class="track-info">
+                <div id="trackTitle" class="track-title">Unknown track</div>
+                <div id="trackArtist" class="track-artist">Unknown artist</div>
+            </div>
+            
+            <div class="playback-controls">
+                <button class="control-btn prev-btn" id="prevBtn" title="Previous track">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+                    </svg>
+                </button>
+                <button class="control-btn play-pause-btn" id="playPauseBtn" title="Play/Pause">
+                    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                </button>
+                <button class="control-btn next-btn" id="nextBtn" title="Next track">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                </button>
+                <button class="control-btn like-btn" id="likeBtn" title="Add to Liked Songs">
+                    <svg viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8"/>
+                        <path d="M11.75 8a.75.75 0 0 1-.75.75H8.75V11a.75.75 0 0 1-1.5 0V8.75H5a.75.75 0 0 1 0-1.5h2.25V5a.75.75 0 0 1 1.5 0v2.25H11a.75.75 0 0 1 .75.75"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="volume-controls">
+                <button class="control-btn" id="muteToggleBtn" title="Mute/Unmute">
+                  <span id="muteIconSVG">
+                    <svg width="32" height="32" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 8V12H6L10 16V4L6 8H3Z"/>
+                      <path d="M14.54 5.46C15.4772 6.39782 16 7.67392 16 9C16 10.3261 15.4772 11.6022 14.54 12.54" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                </button>
+                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
+                <span id="volumeValue" class="volume-value">50%</span>
+            </div>
+
+
+        </div>
+        
+        <button id="readMeBtn" class="quick-btn" style="width:50%;margin-top:10px;justify-content:center;">Read Me</button>
+    </div>
+    
+    <div id="notification" class="notification"></div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
