@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Spotify-Web Playback Controller",
-  "version": "1.6",
+  "version": "2.0",
   "description": "Complete Spotify-Web playback control with track navigation, volume and keyboard control.",
   "permissions": [
     "tabs",
@@ -15,26 +15,26 @@
   "action": {
     "default_popup": "popup.html",
     "default_title": "Spotify-Web Playback Controller",
-	"default_icon": {
+    "default_icon": {
       "16": "icons/icon16.png",
       "24": "icons/icon24.png",
       "32": "icons/icon32.png"
     }
   },
-  "content_scripts": [
-    {
-      "matches": ["https://open.spotify.com/*"],
-      "js": ["content.js"],
-      "run_at": "document_idle"
-    }
-  ],
+  "content_scripts": [],
   "background": {
     "service_worker": "background.js"
   },
-  "web_accessible_resources": [{
-    "resources": ["description_popup.html"],
-    "matches": ["<all_urls>"]
-  }],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "dashboard.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
   "commands": {
     "next-track": {
       "suggested_key": {
