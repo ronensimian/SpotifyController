@@ -1,6 +1,6 @@
 # Spotify-Web Playback Controller
 
-**Version**: 1.7
+**Version**: 2.0
 
 Take full command of your Spotify listening experience—right from your Chrome toolbar. This extension provides complete web playback control with track navigation, precision volume adjustment, and comprehensive global keyboard integration.
 
